@@ -7,13 +7,13 @@
 #       Github:     https://github.com/thieunguyen5991                                                  %
 # -------------------------------------------------------------------------------------------------------%
 
-from functools import reduce
-from operator import add
-import random
 import logging
+import random
+from numpy.random import choice
 from copy import deepcopy
 from network import Network
 from network_helper import train_and_score
+
 
 # Setup logging.
 logging.basicConfig(
@@ -23,13 +23,14 @@ logging.basicConfig(
     filename='log.txt'
 )
 
+
 class GaOptimizer:
     """Class that implements genetic algorithm for MLP optimization."""
 
     def __init__(self, nn_param_choices, max_gens=10, pop_size=10, retain=0.4, random_select=0.1, mutate_chance=0.2):
         """Create an optimizer.
         Args:
-            nn_param_choices (dict): Possible network paremters
+            nn_param_choices (dict): Possible network parameters
             retain (float): Percentage of population to retain after each generation
             random_select (float): Probability of a rejected network remaining in the population
             mutate_chance (float): Probability a network will be randomly mutated
@@ -40,6 +41,7 @@ class GaOptimizer:
         self.random_select = random_select
         self.retain = retain
         self.nn_param_choices = nn_param_choices
+        self.model = None
 
     def create_solution(self):
         return Network(self.nn_param_choices)
@@ -50,148 +52,101 @@ class GaOptimizer:
         train_and_score(network, dataset)
         return network.accuracy
 
-    def grade(self, pop):
-        """Find average fitness for a population.
-
-        Args:
-            pop (list): The population of networks
-
-        Returns:
-            (float): The average accuracy of the population
-
-        """
-        summed = reduce(add, (self.fitness(network) for network in pop))
-        return summed / float((len(pop)))
-
-    def breed(self, mother, father):
+    def __breed__(self, mother, father):
         """Make two children as parts of their parents.
-
         Args:
-            mother (dict): Network parameters
-            father (dict): Network parameters
-
+            mother (Network): Network parameters
+            father (Network): Network parameters
         Returns:
             (list): Two network objects
-
         """
         children = []
         for _ in range(2):
-
             child = {}
-
             # Loop through the parameters and pick params for the kid.
             for param in self.nn_param_choices:
                 child[param] = random.choice([mother.network[param], father.network[param]])
 
             # Now create a network object.
             network = Network(self.nn_param_choices)
-            network.create_set(child)
+            network.set_network(child)
 
             # Randomly mutate some of the children.
             if self.mutate_chance > random.random():
-                network = self.mutate(network)
-
+                network = self.__mutate__(network)
             children.append(network)
-
         return children
 
-    def mutate(self, network):
+    def __mutate__(self, network):
         """Randomly mutate one part of the network.
-
         Args:
-            network (dict): The network parameters to mutate
-
+            network (Network): The network parameters to mutate
         Returns:
             (Network): A randomly mutated network object
-
         """
         # Choose a random key.
         mutation = random.choice(list(self.nn_param_choices.keys()))
-
         # Mutate one of the params.
         network.network[mutation] = random.choice(self.nn_param_choices[mutation])
-
         return network
 
-    def create_new_population(self):
-        # Get the number we want to keep for the next gen.
-        retain_length = int(len(graded) * self.retain)
+    def create_new_population(self, pop):
+        """ Remember pop already sorted by fitness """
 
-        # The parents are every network we want to keep.
-        parents = graded[:retain_length]
+        retain_length = int(self.pop_size * self.retain)    # Get the number we want to keep for the next gen.
+        parents = pop[:retain_length]                       # The parents are every network we want to keep.
 
-        # For those we aren't keeping, randomly keep some anyway.
-        for individual in graded[retain_length:]:
+        for individual in pop[retain_length:]:              # For those we aren't keeping, randomly keep some anyway.
             if self.random_select > random.random():
                 parents.append(individual)
 
-        # Now find out how many spots we have left to fill.
-        parents_length = len(parents)
-        desired_length = len(pop) - parents_length
+        parents_length = len(parents)                       # Now find out how many spots we have left to fill.
+        desired_length = self.pop_size - parents_length
         children = []
 
         # Add children, which are bred from two remaining networks.
         while len(children) < desired_length:
 
-            # Get a random mom and dad.
-            male = random.randint(0, parents_length - 1)
-            female = random.randint(0, parents_length - 1)
+            # Get a random mom and dad and they aren't the same network...
+            male, female = choice(range(0, parents_length), 2, replace=False)
+            male, female = parents[male], parents[female]
 
-            # Assuming they aren't the same network...
-            if male != female:
-                male = parents[male]
-                female = parents[female]
-
-                # Breed them.
-                babies = self.breed(male, female)
-
-                # Add the children one at a time.
-                for baby in babies:
-                    # Don't grow larger than desired length.
-                    if len(children) < desired_length:
-                        children.append(baby)
-
+            babies = self.__breed__(male, female)           # Breed them.
+            for baby in babies:                             # Add the children one at a time.
+                if len(children) < desired_length:          # Don't grow larger than desired length.
+                    children.append(baby)
         parents.extend(children)
-
         return parents
 
     def evolve(self, dataset):
         """Evolve a population of networks.
         Args:
+            dataset ():
             pop (list): A list of network parameters
         Returns:
-            (list): The evolved population of networks
+            (Network): The evolved population of networks
         """
         networks = [self.create_solution() for _ in range(self.pop_size)]
         # Get scores for each network.
         pop = [(network, self.calculate_fitness(network, dataset)) for network in networks]
-        # Sort on the scores.
-        networks = [item[0] for item in sorted(pop, key=lambda x: x[0], reverse=True)]          # Higher is better because fitness is accuracy
-        # Get the g_best
-        g_best = deepcopy(networks[0])
+        # Sort on the scores. Higher is better because fitness is accuracy
+        networks = [item[0] for item in sorted(pop, key=lambda x: x[0], reverse=True)]
+        self.model = deepcopy(networks[0])  # Get the g_best
 
         # Evolve the generation.
         for epoch in range(self.max_gens):
             logging.info("***Doing generation %d of %d***" % (epoch + 1, self.max_gens))
 
-            # Print out the average accuracy each generation.
-            logging.info("\tBest accuracy: %.2f%%" % (average_accuracy * 100))
-            logging.info('-' * 80)
-
             # Create new population
-                networks = optimizer.evolve(networks)
+            networks = self.create_new_population(networks)
+            # Get scores for each network.
+            pop = [(network, self.calculate_fitness(network, dataset)) for network in networks]
+            # Sort on the scores. Higher is better because fitness is accuracy
+            networks = [item[0] for item in sorted(pop, key=lambda x: x[0], reverse=True)]
 
-        # Sort our final population.
-        networks = sorted(networks, key=lambda x: x.accuracy, reverse=True)
+            if self.model.accuracy > networks[0].accuracy:
+                g_best = deepcopy(networks[0])
+            # Print out the best accuracy each generation.
+            logging.info("Epoch: %d/%d, best accuracy: %.4f%%" % (epoch+1, self.max_gens, self.model.accuracy * 100))
 
-        # Print out the top 5 networks.
-        print_networks(networks[:5])
-
-
-        # Get scores for each network.
-        graded = [(self.fitness(network), network) for network in pop]
-
-        # Sort on the scores.
-        graded = [x[1] for x in sorted(graded, key=lambda x: x[0], reverse=True)]
-
-
+        return self.model

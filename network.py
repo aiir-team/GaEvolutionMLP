@@ -1,12 +1,18 @@
-"""Class that represents the network to be evolved."""
+#!/usr/bin/env python
+# ------------------------------------------------------------------------------------------------------%
+# Created by "Thieu Nguyen" at 20:30, 20/05/2020                                                        %
+#                                                                                                       %
+#       Email:      nguyenthieu2102@gmail.com                                                           %
+#       Homepage:   https://www.researchgate.net/profile/Thieu_Nguyen6                                  %
+#       Github:     https://github.com/thieunguyen5991                                                  %
+# -------------------------------------------------------------------------------------------------------%
+
 import random
 import logging
-from train import train_and_score
+
 
 class Network:
-    """Represent a network and let us operate on it.
-
-    Currently only works for an MLP.
+    """Represent a network and let us operate on it. Currently only works for an MLP.
     """
 
     def __init__(self, nn_param_choices=None):
@@ -19,9 +25,9 @@ class Network:
                 activation (list): ['relu', 'elu']
                 optimizer (list): ['rmsprop', 'adam']
         """
-        self.accuracy = 0.
+        self.accuracy = None
         self.nn_param_choices = nn_param_choices
-        self.network = {}  # (dic): represents MLP network parameters
+        self.network = {}       # (dict): represents MLP network parameters
         self.create_random()
 
     def create_random(self):
@@ -32,10 +38,7 @@ class Network:
     def set_network(self, network):
         self.network = network
 
-    def train(self, dataset):
-        self.accuracy = train_and_score(self.network, dataset)
-
     def print_network(self):
         """Print out a network."""
         logging.info(self.network)
-        logging.info("Network accuracy: %.2f%%" % (self.accuracy * 100))
+        logging.info("Network accuracy: %.3f%%" % (self.accuracy * 100))

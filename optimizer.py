@@ -49,7 +49,7 @@ class GaOptimizer:
     @staticmethod
     def calculate_fitness(network, dataset):
         """Return the accuracy, which is our fitness function."""
-        train_and_score(network, dataset)
+        train_and_score(network.network, dataset)
         return network.accuracy
 
     def __breed__(self, mother, father):
@@ -128,9 +128,9 @@ class GaOptimizer:
         """
         networks = [self.create_solution() for _ in range(self.pop_size)]
         # Get scores for each network.
-        pop = [(network, self.calculate_fitness(network, dataset)) for network in networks]
+        pop = [(net, self.calculate_fitness(net, dataset)) for net in networks]
         # Sort on the scores. Higher is better because fitness is accuracy
-        networks = [item[0] for item in sorted(pop, key=lambda x: x[0], reverse=True)]
+        networks = [item[0] for item in sorted(pop, key=lambda x: x[1], reverse=True)]
         self.model = deepcopy(networks[0])  # Get the g_best
 
         # Evolve the generation.

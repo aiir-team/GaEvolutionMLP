@@ -19,10 +19,10 @@ You can set your network parameter choices by editing each of those files first.
 
 ## Credits
 
-+ The genetic algorithm code is based on the code from this excellent blog post: https://lethain.com/genetic
--algorithms-cool-name-damn-simple/
++ The genetic algorithm code is based on the code from this excellent blog post: 
+[Simple GA](https://lethain.com/genetic-algorithms-cool-name-damn-simple/)
 
-+ The small version in: https://github.com/harvitronix/neural-network-genetic-algorithm
++ The small version in: [GA and Neural Network](https://github.com/harvitronix/neural-network-genetic-algorithm)
 
 + The big version in: [Jan Liphardt's implementation, DeepEvolve](https://github.com/jliphard/DeepEvolve).
 

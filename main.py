@@ -22,9 +22,9 @@ logging.basicConfig(
 )
 
 if __name__ == '__main__':
-    generations = 2                        # Number of times to evole the population.
-    population = 5                         # Number of networks in each generation.
-    dataset = 'cifar10'
+    generations = 2                         # Number of times to evole the population.
+    population = 5                          # Number of networks in each generation.
+    dataset = 'mnist'                       # cifar10 / mnist
 
     nn_param_choices = {
         'nb_neurons': [16, 32],             #[64, 128, 256, 512, 768, 1024],

@@ -141,7 +141,7 @@ class GaOptimizer:
             # Get scores for each network.
             pop = [(network, self.calculate_fitness(network, dataset)) for network in networks]
             # Sort on the scores. Higher is better because fitness is accuracy
-            networks = [item[0] for item in sorted(pop, key=lambda x: x[0], reverse=True)]
+            networks = [item[0] for item in sorted(pop, key=lambda x: x[1], reverse=True)]
 
             if self.model.accuracy > networks[0].accuracy:
                 self.model = deepcopy(networks[0])

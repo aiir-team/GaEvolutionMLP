@@ -63,21 +63,21 @@ def get_dataset(dataset="mnist"):
     return nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test
 
 
-def compile_model(network, nb_classes, input_shape):
+def compile_model(paras, nb_classes, input_shape):
     """Compile a sequential model.
     Args:
         input_shape (tuple):
         nb_classes (int):
-        network (dict): the parameters of the network
+        paras (dict): the parameters of the network
     Returns:
         a compiled network.
     """
     # Get our network parameters.
-    nb_layers = network['nb_layers']
-    nb_neurons = network['nb_neurons']
-    activation = network['activation']
-    optimizer = network['optimizer']
-    dropout = network['dropout']
+    nb_layers = paras['nb_layers']
+    nb_neurons = paras['nb_neurons']
+    activation = paras['activation']
+    optimizer = paras['optimizer']
+    dropout = paras['dropout']
 
     model = Sequential()
     model.add(Dense(nb_neurons, activation=activation, input_shape=input_shape))            # input layers
@@ -92,15 +92,15 @@ def compile_model(network, nb_classes, input_shape):
     return model
 
 
-def train_and_score(network, dataset):
+def train_and_score(paras, dataset):
     """Train the model, return test loss.
     Args:
-        network (dict): the parameters of the network
+        paras (dict): the parameters of the network
         dataset (str): Dataset to use for training/evaluating
     """
     nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test = get_dataset(dataset)
 
-    model = compile_model(network, nb_classes, input_shape)
+    model = compile_model(paras, nb_classes, input_shape)
 
     model.fit(x_train, y_train,
               batch_size=batch_size,

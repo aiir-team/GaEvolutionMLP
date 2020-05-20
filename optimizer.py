@@ -49,8 +49,9 @@ class GaOptimizer:
     @staticmethod
     def calculate_fitness(network, dataset):
         """Return the accuracy, which is our fitness function."""
-        train_and_score(network.network, dataset)
-        return network.accuracy
+        acc = train_and_score(network.paras, dataset)
+        network.__setattr__("accuracy", acc)
+        return acc
 
     def __breed__(self, mother, father):
         """Make two children as parts of their parents.
@@ -65,11 +66,11 @@ class GaOptimizer:
             child = {}
             # Loop through the parameters and pick params for the kid.
             for param in self.nn_param_choices:
-                child[param] = random.choice([mother.network[param], father.network[param]])
+                child[param] = random.choice([mother.paras[param], father.paras[param]])
 
             # Now create a network object.
             network = Network(self.nn_param_choices)
-            network.set_network(child)
+            network.set_paras(child)
 
             # Randomly mutate some of the children.
             if self.mutate_chance > random.random():
@@ -87,7 +88,7 @@ class GaOptimizer:
         # Choose a random key.
         mutation = random.choice(list(self.nn_param_choices.keys()))
         # Mutate one of the params.
-        network.network[mutation] = random.choice(self.nn_param_choices[mutation])
+        network.paras[mutation] = random.choice(self.nn_param_choices[mutation])
         return network
 
     def create_new_population(self, pop):
@@ -135,8 +136,6 @@ class GaOptimizer:
 
         # Evolve the generation.
         for epoch in range(self.max_gens):
-            logging.info("***Doing generation %d of %d***" % (epoch + 1, self.max_gens))
-
             # Create new population
             networks = self.create_new_population(networks)
             # Get scores for each network.
@@ -145,7 +144,7 @@ class GaOptimizer:
             networks = [item[0] for item in sorted(pop, key=lambda x: x[0], reverse=True)]
 
             if self.model.accuracy > networks[0].accuracy:
-                g_best = deepcopy(networks[0])
+                self.model = deepcopy(networks[0])
             # Print out the best accuracy each generation.
             logging.info("Epoch: %d/%d, best accuracy: %.4f%%" % (epoch+1, self.max_gens, self.model.accuracy * 100))
 

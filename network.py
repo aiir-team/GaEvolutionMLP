@@ -17,7 +17,6 @@ class Network:
 
     def __init__(self, nn_param_choices=None):
         """Initialize our network.
-
         Args:
             nn_param_choices (dict): Parameters for the network, includes:
                 nb_neurons (list): [64, 128, 256]
@@ -27,18 +26,18 @@ class Network:
         """
         self.accuracy = None
         self.nn_param_choices = nn_param_choices
-        self.network = {}       # (dict): represents MLP network parameters
+        self.paras = {}       # (dict): represents MLP network parameters
         self.create_random()
 
     def create_random(self):
         """Create a random network."""
         for key in self.nn_param_choices:
-            self.network[key] = random.choice(self.nn_param_choices[key])
+            self.paras[key] = random.choice(self.nn_param_choices[key])
 
-    def set_network(self, network):
-        self.network = network
+    def set_paras(self, paras):
+        self.paras = paras
 
     def print_network(self):
         """Print out a network."""
-        logging.info(self.network)
+        logging.info(self.paras)
         logging.info("Network accuracy: %.3f%%" % (self.accuracy * 100))

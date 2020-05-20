@@ -1,4 +1,13 @@
-"""Iterate over every combination of hyperparameters."""
+#!/usr/bin/env python
+# ------------------------------------------------------------------------------------------------------%
+# Created by "Thieu Nguyen" at 21:41, 20/05/2020                                                        %
+#                                                                                                       %
+#       Email:      nguyenthieu2102@gmail.com                                                           %
+#       Homepage:   https://www.researchgate.net/profile/Thieu_Nguyen6                                  %
+#       Github:     https://github.com/thieunguyen5991                                                  %
+# -------------------------------------------------------------------------------------------------------%
+"""Iterate over every combination of hyper-parameters."""
+
 import logging
 from network import Network
 from tqdm import tqdm
@@ -10,6 +19,7 @@ logging.basicConfig(
     level=logging.DEBUG,
     filename='brute-log.txt'
 )
+
 
 def train_networks(networks, dataset):
     """Train each network.
@@ -31,6 +41,7 @@ def train_networks(networks, dataset):
     # Print out the top 5 networks.
     print_networks(networks[:5])
 
+
 def print_networks(networks):
     """Print a list of networks.
 
@@ -41,6 +52,7 @@ def print_networks(networks):
     logging.info('-'*80)
     for network in networks:
         network.print_network()
+
 
 def generate_network_list(nn_param_choices):
     """Generate a list of all possible networks.
@@ -59,24 +71,25 @@ def generate_network_list(nn_param_choices):
         for nbl in nn_param_choices['nb_layers']:
             for a in nn_param_choices['activation']:
                 for o in nn_param_choices['optimizer']:
+                    for do in nn_param_choices['dropout']:
 
-                    # Set the parameters.
-                    network = {
-                        'nb_neurons': nbn,
-                        'nb_layers': nbl,
-                        'activation': a,
-                        'optimizer': o,
-                    }
+                        # Set the parameters.
+                        network = {
+                            'nb_neurons': nbn,
+                            'nb_layers': nbl,
+                            'activation': a,
+                            'optimizer': o,
+                            'dropout': do
+                        }
+                        # Instantiate a network object with set parameters.
+                        network_obj = Network()
+                        network_obj.set_paras(network)
 
-                    # Instantiate a network object with set parameters.
-                    network_obj = Network()
-                    network_obj.create_set(network)
-
-                    networks.append(network_obj)
-
+                        networks.append(network_obj)
     return networks
 
-def main():
+
+if __name__ == '__main__':
     """Brute force test every network."""
     dataset = 'cifar10'
 
@@ -84,8 +97,8 @@ def main():
         'nb_neurons': [64, 128, 256, 512, 768, 1024],
         'nb_layers': [1, 2, 3, 4],
         'activation': ['relu', 'elu', 'tanh', 'sigmoid'],
-        'optimizer': ['rmsprop', 'adam', 'sgd', 'adagrad',
-                      'adadelta', 'adamax', 'nadam'],
+        'optimizer': ['rmsprop', 'adam', 'sgd', 'adagrad', 'adadelta', 'adamax', 'nadam'],
+        'dropout': [0.1, 0.2, 0.3, 0.4, 0.5]
     }
 
     logging.info("***Brute forcing networks***")
@@ -93,6 +106,3 @@ def main():
     networks = generate_network_list(nn_param_choices)
 
     train_networks(networks, dataset)
-
-if __name__ == '__main__':
-    main()

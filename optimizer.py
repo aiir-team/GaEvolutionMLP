@@ -7,13 +7,11 @@
 #       Github:     https://github.com/thieunguyen5991                                                  %
 # -------------------------------------------------------------------------------------------------------%
 
-import logging
-import random
-from numpy.random import choice
+from numpy.random import choice, randint, uniform
 from copy import deepcopy
+import logging
 from network import Network
 from network_helper import train_and_score
-
 
 # Setup logging.
 logging.basicConfig(
@@ -61,22 +59,29 @@ class GaOptimizer:
         Returns:
             (list): Two network objects
         """
-        children = []
-        for _ in range(2):
-            child = {}
-            # Loop through the parameters and pick params for the kid.
-            for param in self.nn_param_choices:
-                child[param] = random.choice([mother.paras[param], father.paras[param]])
+        n_paras = len(mother.paras.keys())
+        cut_point = randint(1, n_paras-1)
 
-            # Now create a network object.
-            network = Network(self.nn_param_choices)
-            network.set_paras(child)
+        child1, child2 = {}, {}
+        # Loop through the parameters and pick params for the kid.
+        for idx, param in enumerate(self.nn_param_choices):
+            if idx < cut_point:
+                child1[param] = mother.paras[param]
+                child2[param] = father.paras[param]
+            else:
+                child1[param] = father.paras[param]
+                child2[param] = mother.paras[param]
 
-            # Randomly mutate some of the children.
-            if self.mutate_chance > random.random():
-                network = self.__mutate__(network)
-            children.append(network)
-        return children
+        # Now create a network object.
+        network1 = Network(self.nn_param_choices).set_paras(child1)
+        network2 = Network(self.nn_param_choices).set_paras(child2)
+
+        # Randomly mutate some of the children.
+        if self.mutate_chance > uniform():
+            network1 = self.__mutate__(network1)
+        if self.mutate_chance > uniform():
+            network2 = self.__mutate__(network2)
+        return [network1, network2]
 
     def __mutate__(self, network):
         """Randomly mutate one part of the network.
@@ -86,9 +91,9 @@ class GaOptimizer:
             (Network): A randomly mutated network object
         """
         # Choose a random key.
-        mutation = random.choice(list(self.nn_param_choices.keys()))
-        # Mutate one of the params.
-        network.paras[mutation] = random.choice(self.nn_param_choices[mutation])
+        mutation = choice(list(self.nn_param_choices.keys()))
+        # Mutate one of the params. Make sure the mutated is different
+        network.paras[mutation] = choice(list(set(self.nn_param_choices[mutation]) - {network.paras[mutation]}))
         return network
 
     def create_new_population(self, pop):
@@ -98,7 +103,7 @@ class GaOptimizer:
         parents = pop[:retain_length]                       # The parents are every network we want to keep.
 
         for individual in pop[retain_length:]:              # For those we aren't keeping, randomly keep some anyway.
-            if self.random_select > random.random():
+            if self.random_select > uniform():
                 parents.append(individual)
 
         parents_length = len(parents)                       # Now find out how many spots we have left to fill.

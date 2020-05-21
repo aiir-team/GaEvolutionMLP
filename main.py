@@ -22,16 +22,16 @@ logging.basicConfig(
 )
 
 if __name__ == '__main__':
-    generations = 2                         # Number of times to evole the population.
-    population = 5                          # Number of networks in each generation.
+    generations = 20                         # Number of times to evole the population.
+    population = 10                          # Number of networks in each generation.
     dataset = 'mnist'                       # cifar10 / mnist
 
     nn_param_choices = {
-        'nb_neurons': [16, 32],             #[64, 128, 256, 512, 768, 1024],
-        'nb_layers': [1, 2],
-        'activation': ['relu', 'elu'],      #['relu', 'elu', 'tanh', 'sigmoid'],
-        'optimizer': ['adam', 'sgd'],       #['rmsprop', 'adam', 'sgd', 'adagrad', 'adadelta', 'adamax', 'nadam'],
-        'dropout': [0.1, 0.2]
+        'nb_neurons': [64, 128, 256, 512, 768, 1024],
+        'nb_layers': [1, 2, 3, 4],
+        'activation': ['relu', 'elu', 'tanh', 'sigmoid'],
+        'optimizer': ['rmsprop', 'adam', 'sgd', 'adagrad', 'adadelta', 'adamax', 'nadam'],
+        'dropout': [0.1, 0.2, 0.3, 0.4, 0.5]
     }
 
     logging.info("***Evolving %d generations with population %d***" % (generations, population))

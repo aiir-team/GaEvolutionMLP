@@ -7,7 +7,7 @@
 #       Github:     https://github.com/thieunguyen5991                                                  %
 # -------------------------------------------------------------------------------------------------------%
 
-import random
+from random import choice
 import logging
 
 
@@ -32,7 +32,7 @@ class Network:
     def create_random(self):
         """Create a random network."""
         for key in self.nn_param_choices:
-            self.paras[key] = random.choice(self.nn_param_choices[key])
+            self.paras[key] = choice(self.nn_param_choices[key])
 
     def set_paras(self, paras):
         self.paras = paras

@@ -73,8 +73,10 @@ class GaOptimizer:
                 child2[param] = mother.paras[param]
 
         # Now create a network object.
-        network1 = Network(self.nn_param_choices).set_paras(child1)
-        network2 = Network(self.nn_param_choices).set_paras(child2)
+        network1 = Network(self.nn_param_choices)
+        network1.set_paras(child1)
+        network2 = Network(self.nn_param_choices)
+        network2.set_paras(child2)
 
         # Randomly mutate some of the children.
         if self.mutate_chance > uniform():

@@ -1,0 +1,24 @@
+05/22/2020 06:42:59 AM - INFO - ***Evolving 20 generations with population 10***
+05/22/2020 02:27:25 PM - INFO - ***Evolving 20 generations with population 10***
+05/22/2020 06:58:29 PM - INFO - Epoch: 1/20, best accuracy: 98.0800%
+05/22/2020 09:36:35 PM - INFO - Epoch: 2/20, best accuracy: 98.0800%
+05/22/2020 11:41:38 PM - INFO - Epoch: 3/20, best accuracy: 98.0800%
+05/23/2020 12:51:17 AM - INFO - Epoch: 4/20, best accuracy: 98.0800%
+05/23/2020 02:29:23 AM - INFO - Epoch: 5/20, best accuracy: 98.0800%
+05/23/2020 03:58:00 AM - INFO - Epoch: 6/20, best accuracy: 98.0800%
+05/23/2020 05:27:04 AM - INFO - Epoch: 7/20, best accuracy: 98.0800%
+05/23/2020 06:54:13 AM - INFO - Epoch: 8/20, best accuracy: 98.0800%
+05/23/2020 08:27:51 AM - INFO - Epoch: 9/20, best accuracy: 98.0800%
+05/23/2020 09:53:46 AM - INFO - Epoch: 10/20, best accuracy: 98.0800%
+05/23/2020 11:30:29 AM - INFO - Epoch: 11/20, best accuracy: 98.0800%
+05/23/2020 01:09:00 PM - INFO - Epoch: 12/20, best accuracy: 98.0800%
+05/23/2020 02:48:29 PM - INFO - Epoch: 13/20, best accuracy: 98.0800%
+05/23/2020 04:09:34 PM - INFO - Epoch: 14/20, best accuracy: 98.0800%
+05/23/2020 06:07:29 PM - INFO - Epoch: 15/20, best accuracy: 98.0800%
+05/23/2020 07:37:04 PM - INFO - Epoch: 16/20, best accuracy: 98.0800%
+05/23/2020 09:06:44 PM - INFO - Epoch: 17/20, best accuracy: 98.0800%
+05/23/2020 10:35:15 PM - INFO - Epoch: 18/20, best accuracy: 98.0800%
+05/23/2020 11:58:16 PM - INFO - Epoch: 19/20, best accuracy: 98.0800%
+05/24/2020 01:22:12 AM - INFO - Epoch: 20/20, best accuracy: 98.0800%
+05/24/2020 01:22:12 AM - INFO - {'nb_neurons': 768, 'nb_layers': 2, 'activation': 'sigmoid', 'optimizer': 'adagrad', 'dropout': 0.4}
+05/24/2020 01:22:12 AM - INFO - Network accuracy: 98.080%
